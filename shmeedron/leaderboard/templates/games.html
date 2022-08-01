@@ -6,11 +6,11 @@
     <div class="row">
     {% for game in games %}
         <div class="col-sm">
-            <a href="{% url 'game-page' game.id %}">
+            <a href="{{ game.get_absolute_url }}">
                 {% if game.thumbnail_url %}
-                <img class="game-thumbnail" src="{{game.thumbnail_url}}">
+                <img class="game-thumbnail rounded mx-auto d-block" src="{{game.thumbnail_url}}">
                 {% endif %}
-                <p>{{game.name}}</p>
+                <p class="text-center">{{game.name}}</p>
             </a>
         </div>
     {% endfor %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 class Player(models.Model):
@@ -24,7 +25,7 @@ class Game(models.Model):
 
     def get_absolute_url(self):
         """Returns the URL to access the game page for a specific game."""
-        return reverse('game-page', args=[str(self.id)])
+        return reverse('game-page', args=[slugify(str(self.name)), str(self.id)])
 
     def __str__(self):
         return self.name
@@ -39,6 +40,10 @@ class Category(models.Model):
 
     class Meta:
         ordering = ['game','name']
+
+    def get_absolute_url(self):
+        """Returns the URL to access the game page for a specific game."""
+        return reverse('category-page', args=[slugify(str(self.game.name)),str(self.game.id),slugify(str(self.name)),str(self.id)])
 
     def __str__(self):
         return f"{self.name} ({self.game})"

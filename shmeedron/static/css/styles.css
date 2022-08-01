@@ -1,7 +1,7 @@
-h1 {
-    color: blue;
+.game-thumbnail {
+    width: 256px;
 }
 
-.game-thumbnail {
-    width: 120px;
+.game-title {
+    text-align: center;
 }

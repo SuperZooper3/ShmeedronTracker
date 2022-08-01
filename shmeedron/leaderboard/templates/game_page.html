@@ -2,6 +2,15 @@
 
 {% block content %}
 
-<h1 class="game_title">{{game.name}}</h1>
+    <h1 class="game-title">{{game.name}}</h1>
+    <ul class="nav justify-content-center">
+        {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ category.get_absolute_url }}">{{category.name}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <img src="{{game.thumbnail_url}}" class="rounded mx-auto d-block">
 
 {% endblock %}
