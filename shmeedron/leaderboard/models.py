@@ -10,6 +10,9 @@ class Player(models.Model):
     class Meta:
         ordering = ['display_name']
 
+    def get_absolute_url(self):
+        return reverse('player', args=[str(self.display_name),str(self.id)])
+
     def __str__(self):
         return self.display_name
 
@@ -72,6 +75,9 @@ class Submition(models.Model):
 
     class Meta:
         ordering = ['time']
+
+    def get_absolute_url(self):
+        return reverse('run-page', args=[str(self.id)])
 
     def __str__(self):
         return (str(self.category) + " in " + str(self.time) + " by " + str(self.player.display_name))

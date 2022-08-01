@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist 
 from django.contrib.auth.models import User
 
-from leaderboard.models import Game, Category, Player
+from leaderboard.models import Game, Category, Player, Submition
 from leaderboard.forms import GameSubmitionForm
 
 # Create your views here.
@@ -37,10 +37,12 @@ def game(request, game_slug, pk):
 def category(request, game_slug, game_pk, cat_slug, cat_pk):
     game = get_object_or_404(Game, pk=game_pk)
     category = get_object_or_404(Category, pk=cat_pk)
+    runs = list(category.submition_set.all().filter(status__exact = "v").order_by("time"))
 
     context = {
         "game":game,
         "category":category,
+        "runs":runs,
     }
 
     return render(request, 'cat_page.html', context=context)
@@ -101,3 +103,14 @@ def player(request, username_slug, pk):
     }
 
     return render(request, 'player.html', context=context)
+
+def run(request, pk):
+    run_object = get_object_or_404(Submition, pk=pk)
+    yt_slug = run_object.video_link.split("/")[-1].split("=")[-1]
+    
+    context = {
+        "run":run_object,
+        "yt_slug":yt_slug,
+    }
+
+    return render(request, 'run_page.html', context=context)
