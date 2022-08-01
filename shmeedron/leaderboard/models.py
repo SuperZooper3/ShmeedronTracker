@@ -17,39 +17,17 @@ class Game(models.Model):
     name = models.CharField(max_length=100) 
     moderators = models.ManyToManyField(Player)
 
+    thumbnail_url = models.URLField(max_length=400, null=True, blank=True)
+
     class Meta:
         ordering = ['name']
 
+    def get_absolute_url(self):
+        """Returns the URL to access the game page for a specific game."""
+        return reverse('game-page', args=[str(self.id)])
+
     def __str__(self):
         return self.name
-
-class Submition(models.Model):
-    """Model representing a speedrun submition."""
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    time = models.DurationField()
-
-    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
-    play_date = models.DateField(null=True, blank=True)
-
-    verifier = models.ForeignKey(Player, related_name="verifyer", on_delete=models.SET_NULL, null=True, blank=True)
-    verification_date = models.DateField(null=True, blank=True)
-
-    description = models.TextField(max_length=1000, null=True, blank=True)
-    video_link = models.URLField(max_length=400)
-
-    SUBMITION_STATUS = (
-        ('p', 'Pending'),
-        ('v', 'Verified'),
-        ('d', 'Denied'),
-    )
-
-    status = models.CharField(max_length=1, choices=SUBMITION_STATUS, blank=True, default='p', help_text='Submition Status')
-
-    class Meta:
-        ordering = ['time']
-
-    def __str__(self):
-        return (self.game.name + " in " + str(self.time) + " by " + self.player.display_name)
 
 class Category(models.Model):
     """Model representing a category of a game (Any% vs 100%)."""
@@ -64,3 +42,31 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.game})"
+
+class Submition(models.Model):
+    """Model representing a speedrun submition."""
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    time = models.DurationField()
+
+    player = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
+    play_date = models.DateField(null=True, blank=True)
+
+    verifier = models.ForeignKey(Player, related_name="verifier", on_delete=models.SET_NULL, null=True, blank=True)
+    verification_date = models.DateField(null=True, blank=True)
+
+    description = models.TextField(max_length=1000, null=True, blank=True)
+    video_link = models.URLField(max_length=500)
+
+    SUBMITION_STATUS = (
+        ('p', 'Pending'),
+        ('v', 'Verified'),
+        ('d', 'Denied'),
+    )
+
+    status = models.CharField(max_length=1, choices=SUBMITION_STATUS, blank=True, default='p', help_text='Submition Status')
+
+    class Meta:
+        ordering = ['time']
+
+    def __str__(self):
+        return (str(self.category) + " in " + str(self.time) + " by " + str(self.player.display_name))

@@ -2,6 +2,19 @@
 
 {% block content %}
 
-<h1>This is a game!</h1>
+<div class="container">
+    <div class="row">
+    {% for game in games %}
+        <div class="col-sm">
+            <a href="{% url 'game-page' game.id %}">
+                {% if game.thumbnail_url %}
+                <img class="game-thumbnail" src="{{game.thumbnail_url}}">
+                {% endif %}
+                <p>{{game.name}}</p>
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+</div>
 
 {% endblock %}
