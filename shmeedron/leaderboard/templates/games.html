@@ -4,6 +4,10 @@
 
 <h1 class="main-page-header">Game Index</h1>
 
+<div class="text-center">
+    <a class="main-sublink" href="{% url 'submit-game' %}">Submit a new game</a>
+</div>
+
 <div class="container">
     <div class="row">
     {% for game in games %}
