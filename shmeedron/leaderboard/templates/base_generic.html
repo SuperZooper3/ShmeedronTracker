@@ -22,7 +22,7 @@
               {% if user.is_authenticated %}
 
                 <li class="nav-item ml-auto">
-                  <a class="nav-link">{% if user.player %}{{ user.player }}{% else %}{{ user.username }}{% endif %}<a>
+                  <a class="nav-link" href="{% url 'player' user.username user.id %}">{% if user.player %}{{ user.player }}{% else %}{{ user.username }}{% endif %}<a>
                 </li>
                 <li class="nav-item ml-auto">
                   <a class="nav-link" href="{% url 'logout' %}">Logout</a>

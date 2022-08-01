@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-
+from django.core.exceptions import ObjectDoesNotExist 
+from django.contrib.auth.models import User
 
 from leaderboard.models import Game, Category, Player
 from leaderboard.forms import GameSubmitionForm
@@ -79,3 +80,24 @@ def submit_game(request):
     }
 
     return render(request, 'game_submition.html', context=context)
+
+def player(request, username_slug, pk):
+    # If a player for the user requested dosen't exist, make it with their username as the display name
+    try:
+        user_object = User.objects.get(pk=pk)
+        player = user_object.player
+    
+    except (ObjectDoesNotExist):
+        user_object = get_object_or_404(User, pk=pk)
+    
+        player = Player()
+        player.display_name = user_object.username
+        player.user_id = user_object.id
+        player.save()
+
+    
+    context = {
+        "player":player,
+    }
+
+    return render(request, 'player.html', context=context)

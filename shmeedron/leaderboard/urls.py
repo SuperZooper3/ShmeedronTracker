@@ -7,4 +7,5 @@ urlpatterns = [
     path('games/submit', views.submit_game, name='submit-game'),
     path('<slug:game_slug>-<int:pk>', views.game, name='game-page'),
     path('<slug:game_slug>-<int:game_pk>/<slug:cat_slug>-<int:cat_pk>', views.category, name='category-page'),
+    path('player/<slug:username_slug>-<int:pk>', views.player, name='player'),
 ]
