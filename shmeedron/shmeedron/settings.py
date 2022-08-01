@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'leaderboard.apps.LeaderboardConfig',
+    'accounts',
 ]
 
 MIDDLEWARE = [
