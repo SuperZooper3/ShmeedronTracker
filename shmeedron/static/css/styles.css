@@ -1,7 +1,14 @@
 .game-thumbnail {
     width: 256px;
+    max-height: 350px;
 }
 
 .game-title {
+    padding: 20px;
+    text-align: center;
+}
+
+.main-page-header {
+    padding: 20px;
     text-align: center;
 }
