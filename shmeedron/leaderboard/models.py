@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from .templatetags.time_formatting import timeclean
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -80,4 +81,4 @@ class Submition(models.Model):
         return reverse('run-page', args=[str(self.id)])
 
     def __str__(self):
-        return (str(self.category) + " in " + str(self.time) + " by " + str(self.player.display_name))
+        return (str(self.category) + " in " + timeclean(self.time) + " by " + str(self.player.display_name))
