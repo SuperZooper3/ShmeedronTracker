@@ -2,13 +2,13 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from django.core.exceptions import ObjectDoesNotExist 
 from django.contrib.auth.models import User
 
 from leaderboard.models import Game, Category, Player, Submition
-from leaderboard.forms import GameSubmitionForm
+from leaderboard.forms import GameSubmitionForm, RunSubmitionForm
 
-from .utils import video_url_parse
+from .utils import video_url_parse, get_player
+import datetime
 
 # Create your views here.
 def index(request):
@@ -87,18 +87,8 @@ def submit_game(request):
 
 def player(request, username_slug, pk): # The pk is a User pk, not a player PK
     # If a player for the user requested dosen't exist, make it with their username as the display name
-    try:
-        user_object = User.objects.get(pk=pk)
-        player = user_object.player
     
-    except (ObjectDoesNotExist):
-        user_object = get_object_or_404(User, pk=pk)
-    
-        player = Player()
-        player.display_name = user_object.username
-        player.user_id = user_object.id
-        player.save()
-
+    player = get_player(get_object_or_404(User,pk))
     
     context = {
         "player":player,

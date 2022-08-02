@@ -1,5 +1,7 @@
 from urllib.parse import urlparse, parse_qsl
-from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist 
+from django.contrib.auth.models import User
+from leaderboard.models import Player
 
 def video_url_parse(url):
     """Takes in a video url (youtube, twitch (more could be added later)) and returns an embed iFrame """
@@ -22,3 +24,16 @@ def video_url_parse(url):
 
     except:
         return -1
+
+def get_player(user):
+
+    try:
+        player = user.player
+    
+    except (ObjectDoesNotExist):    
+        player = Player()
+        player.display_name = user.username
+        player.user_id = user.id
+        player.save()
+
+    return player
