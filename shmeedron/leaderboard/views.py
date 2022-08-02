@@ -1,3 +1,4 @@
+from copy import deepcopy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect, HttpResponse
@@ -41,6 +42,19 @@ def category(request, game_slug, game_pk, cat_slug, cat_pk):
     game = get_object_or_404(Game, pk=game_pk)
     category = get_object_or_404(Category, pk=cat_pk)
     runs = list(category.submition_set.all().filter(status__exact = "v").order_by("time"))
+
+    # Process the runs to only include a player's best time, unless the obsolete tag is true
+    obsolete = (request.GET.get('obsolete', '').lower() == 'true')
+    if not obsolete:
+        temp = deepcopy(runs)
+        runs = []
+        players = []
+
+        for run in temp:
+            if run.player.id not in players:
+                runs.append(run)
+                players.append(run.player.id)
+    
 
     context = {
         "game":game,
