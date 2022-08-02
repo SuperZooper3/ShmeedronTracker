@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from leaderboard.models import Game, Category, Player, Submition
 from leaderboard.forms import GameSubmitionForm
 
+from .utils import video_url_parse
+
 # Create your views here.
 def index(request):
     
@@ -83,7 +85,7 @@ def submit_game(request):
 
     return render(request, 'game_submition.html', context=context)
 
-def player(request, username_slug, pk):
+def player(request, username_slug, pk): # The pk is a User pk, not a player PK
     # If a player for the user requested dosen't exist, make it with their username as the display name
     try:
         user_object = User.objects.get(pk=pk)
@@ -106,11 +108,11 @@ def player(request, username_slug, pk):
 
 def run(request, pk):
     run_object = get_object_or_404(Submition, pk=pk)
-    yt_slug = run_object.video_link.split("/")[-1].split("=")[-1]
+    embed_src = video_url_parse(run_object.video_link)
     
     context = {
         "run":run_object,
-        "yt_slug":yt_slug,
+        "embed_src":embed_src,
     }
 
     return render(request, 'run_page.html', context=context)

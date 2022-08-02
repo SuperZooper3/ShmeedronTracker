@@ -11,7 +11,7 @@ class Player(models.Model):
         ordering = ['display_name']
 
     def get_absolute_url(self):
-        return reverse('player', args=[str(self.display_name),str(self.id)])
+        return reverse('player', args=[str(self.display_name),str(self.user.id)])
 
     def __str__(self):
         return self.display_name
