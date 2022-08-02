@@ -3,9 +3,10 @@
 
 {% block content %}
 
-    <h1 class="game-title"><a href="{{game.get_absolute_url}}">{{game.name}}</a> - {{category.name}}</h1>
+    <h1 class="game-title"><a href="{{game.get_absolute_url}}">{{game.name}}</a> - {{category.name}} {% if obsolete %}(Obsolete runs){% endif %}</h1>
 
     <a href="{% url 'submit-run' category.id %}">Submit</a>
+    <a href="{{ obsolete_link }}">Toggle Obsolete</a>
 
     <table class="table table-hover">
         <tr>

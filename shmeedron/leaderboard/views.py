@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from leaderboard.models import Game, Category, Player, Submition
 from leaderboard.forms import GameSubmitionForm, RunSubmitionForm
 
-from .utils import video_url_parse, get_player
+from .utils import video_url_parse, get_player, reverse_querystring
 import datetime
 
 # Create your views here.
@@ -55,11 +55,23 @@ def category(request, game_slug, game_pk, cat_slug, cat_pk):
                 runs.append(run)
                 players.append(run.player.id)
     
+        obsolete_link = reverse_querystring('category-page',
+            args=(slugify(category.game.name),str(category.game.id),slugify(category.name),str(category.id)),
+            query_kwargs={'obsolete': 'true'},
+            )
+    else:
+        obsolete_link = reverse_querystring('category-page',
+            args=(slugify(category.game.name),str(category.game.id),slugify(category.name),str(category.id)),
+            query_kwargs={'obsolete': 'false'},
+            )
 
     context = {
         "game":game,
         "category":category,
         "runs":runs,
+        "obsolete":obsolete,
+        "obsolete_link":obsolete_link,
+
     }
 
     return render(request, 'cat_page.html', context=context)
