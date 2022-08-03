@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 from leaderboard.models import Game, Category, Player, Submition
-from leaderboard.forms import GameSubmitionForm, RunSubmitionForm
+from leaderboard.forms import GameSubmitionForm, RunSubmitionForm, VerificationDecisionForm
 
 from .utils import video_url_parse, get_player, reverse_querystring
 import datetime
@@ -114,8 +114,10 @@ def submit_game(request):
 
 def player(request, username_slug, pk): # The pk is a User pk, not a player PK
     # If a player for the user requested dosen't exist, make it with their username as the display name
-    
-    player = get_player(get_object_or_404(User,pk))
+    player = get_player(get_object_or_404(User,pk=pk))
+
+    runs = player.submition_set.all()
+    print(runs)
     
     context = {
         "player":player,
@@ -166,7 +168,8 @@ def submit_run(request, cat_pk):
             )))
 
     else:
-        form = RunSubmitionForm()
+        proposed_date = datetime.date.today()
+        form = RunSubmitionForm(initial={'run_date':proposed_date})
 
     context = {
         "form":form,
@@ -174,3 +177,120 @@ def submit_run(request, cat_pk):
     }
 
     return render(request, 'run_submition.html', context=context)
+
+@login_required
+def verify_main(request):
+    player = get_player(request.user)
+
+    games = list(player.game_set.all().order_by("name"))
+
+    context = {
+        "games":games,
+    }
+
+    return render(request, 'verify_main.html', context=context)
+
+@login_required
+def verify_game(request, game_slug, game_pk):
+    
+    player = get_player(request.user)
+    game = get_object_or_404(Game, pk=game_pk)
+
+    if player not in game.moderators.all():
+        return HttpResponse('Unauthorized', status=401)
+
+    categorys = game.category_set.all()
+    
+    queue = []
+
+    for cat in categorys:
+        queue.extend(
+            list(
+               cat.submition_set.all().filter(status__exact = "p").order_by("play_date")
+            )
+        )
+
+    embed_src = []
+
+    for run in queue:
+        embed_src.append(
+            video_url_parse(run.video_link)
+        )
+
+    print(queue,embed_src)
+
+    context = {
+        "game":game,
+        "queue":queue,
+        "embed_src":embed_src,
+    }
+
+    return render(request, 'verify_game.html', context=context)
+
+@login_required
+def verify_run(request, run_pk):
+    
+    player = get_player(request.user)
+    run = get_object_or_404(Submition, pk=run_pk)
+
+    if player not in run.category.game.moderators.all():
+        return HttpResponse('Unauthorized', status=401)
+
+    if request.method == 'POST':
+        
+        form = VerificationDecisionForm(request.POST)
+
+        if form.is_valid(): 
+            run.status = "v"
+            run.verifier = player
+            run.verification_date = datetime.datetime.today()
+
+            run.save()
+
+            return HttpResponseRedirect(reverse('verify-main'))
+        
+        return HttpResponseRedirect(reverse('verify-run', run_pk))
+
+    else:
+        form = VerificationDecisionForm(initial={'run_id':run_pk,"decision":"v"})
+
+    context = {
+        "run":run,
+        "form":form,
+    }
+
+    return render(request, 'verify_run.html', context=context)
+
+@login_required
+def deny_run(request, run_pk):
+
+    player = get_player(request.user)
+    run = get_object_or_404(Submition, pk=run_pk)
+
+    if player not in run.category.game.moderators.all():
+        return HttpResponse('Unauthorized', status=401)
+
+    if request.method == 'POST':
+        
+        form = VerificationDecisionForm(request.POST)
+
+        if form.is_valid(): 
+            run.status = "d"
+            run.verifier = player
+            run.verification_date = datetime.datetime.today()
+
+            run.save()
+
+            return HttpResponseRedirect(reverse('verify-main'))
+        
+        return HttpResponseRedirect(reverse('deny-run', run_pk))
+
+    else:
+        form = VerificationDecisionForm(initial={'run_id':run_pk,"decision":"d"})
+
+    context = {
+        "run":run,
+        "form":form,
+    }
+
+    return render(request, 'deny_run.html', context=context)

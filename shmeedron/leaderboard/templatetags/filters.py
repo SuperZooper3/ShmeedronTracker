@@ -13,6 +13,13 @@ def timeclean(value):
     seconds = int(total % 60)
     miliseconds = int((total % 1) * 1000)
 
-    return '{:02}:{:02}:{:02}.{:03}'.format(hours, minutes, seconds, miliseconds).lstrip("0:")
+    if hours == 0:
+        return '{:02}:{:02}.{:03}'.format(minutes, seconds, miliseconds)
+    else:
+        return '{}:{:02}:{:02}.{:03}'.format(hours, minutes, seconds, miliseconds).lstrip("0:")
+
+def index(indexable, i):
+    return indexable[i]
 
 register.filter("timeclean",timeclean)
+register.filter("index",index)

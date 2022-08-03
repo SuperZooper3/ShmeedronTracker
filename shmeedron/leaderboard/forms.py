@@ -15,3 +15,7 @@ class RunSubmitionForm(forms.Form):
     video_url = forms.URLField(help_text="Link to the video. Currently supported: youtube.com, youtu.be, twitch.tv")
     description = forms.CharField(max_length=1000)
     run_date = forms.DateField()
+
+class VerificationDecisionForm(forms.Form):
+    run_id = forms.IntegerField()
+    decision = forms.CharField(max_length=1)

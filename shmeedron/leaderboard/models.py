@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-from .templatetags.time_formatting import timeclean
+from .templatetags.filters import timeclean
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -1,0 +1,32 @@
+{% extends "base_generic.html" %}
+
+{% load filters %}
+
+{% block content %}
+
+<h1 class="main-page-header">{{game.name}} Verifier Page</h1>
+
+<p>Runs in the Queue:</p>
+
+{% if queue %}
+    {% for run in queue %}
+        <div>
+            <h3 class="queue-title">{{run}}</h3>
+            <div>
+                <a href="{{run.category.get_absolute_url}}">{{run.category}}</a>
+                <a href="{{run.player.get_absolute_url}}">{{run.player}}</a>
+                <a href="{{run.video_link}}">Run link</a>
+                <a href="{% url 'verify-run' run.id %}" class="verify-link">Verify</a>
+                <a href="{% url 'deny-run' run.id %}" href="" class="deny-link">Deny</a>
+                <br/>
+                <iframe width="720" height="480" allowfullscreen
+                    src="{{embed_src|index:forloop.counter0}}">
+                </iframe>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>There are no runs in the queue! Woooo!</p> <a href="{% url 'verify-main' %}">Back</a>
+{% endif %}
+
+{% endblock %}

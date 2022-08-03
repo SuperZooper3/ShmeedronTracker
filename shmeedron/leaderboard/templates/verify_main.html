@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1 class="main-page-header">Main Verifier Page</h1>
+
+<p>Here are the games you moderate:</p>
+
+{% if games %}
+<ul>
+    {% for game in games %}
+    <li>
+        <a href="{% url 'verify-game' game.name|slugify game.id %}">{{game.name}}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>You don't moderate any games :(</p>
+{% endif %}
+
+{% endblock %}

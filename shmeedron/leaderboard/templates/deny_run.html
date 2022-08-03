@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<p>Are you sure you want to <b>deny</b> {{run}}?</p>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <input name="{{ form.run_id.html_name }}" id="{{ form.run_id.id_for_label }}" value="{{ form.run_id.value }}" type="hidden">
+    <input name="{{ form.decision.html_name }}" id="{{ form.decision.id_for_label }}" value="{{ form.decision.value }}" type="hidden">
+    <input type="submit" value="Deny">
+</form>
+
+{% endblock %}
