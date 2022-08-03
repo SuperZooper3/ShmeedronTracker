@@ -116,11 +116,11 @@ def player(request, username_slug, pk): # The pk is a User pk, not a player PK
     # If a player for the user requested dosen't exist, make it with their username as the display name
     player = get_player(get_object_or_404(User,pk=pk))
 
-    runs = player.submition_set.all()
-    print(runs)
+    runs = player.submition_set.all().order_by("category","time")
     
     context = {
         "player":player,
+        "runs":runs,
     }
 
     return render(request, 'player.html', context=context)
