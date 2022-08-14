@@ -14,12 +14,12 @@ def video_url_parse(url):
         if "youtube.com" in parsed.netloc and parsed.path == "/watch":
             query_args = dict(parse_qsl(parsed.query))
             video_slug = query_args["v"]
-            return f"https://www.youtube.com/embed/{video_slug}&hd=1"
+            return f"https://www.youtube.com/embed/{video_slug}"
             
 
         elif "youtu.be" in parsed.netloc: #Youtube shortened format
             video_slug = parsed.path.replace("/","")
-            return f"https://www.youtube.com/embed/{video_slug}&hd=1"
+            return f"https://www.youtube.com/embed/{video_slug}"
 
         elif "twitch.tv" in parsed.netloc and "/videos" in parsed.path:
             video_slug = parsed.path[(parsed.path.index("/videos/") + len("/videos/")):]
